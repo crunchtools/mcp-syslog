@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.crunchtools/mcp-syslog",
+  "title": "MCP Syslog",
+  "description": "Secure MCP server for centrally collected infrastructure logs \u2014 search, tail, grep and correlate",
+  "repository": {
+    "url": "https://github.com/crunchtools/mcp-syslog",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "mcp-syslog-crunchtools",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
