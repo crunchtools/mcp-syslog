@@ -22,7 +22,11 @@ ExecStart=/usr/bin/podman run \
     -p 127.0.0.1:8027:8027 \
     -e SYSLOG_LOG_ROOT=/logs \
     -v /srv/syslog.crunchtools.com/data/logs:/logs:ro,z \
-    quay.io/crunchtools/mcp-syslog:latest \
+    # GHCR, not Quay: quay.io/crunchtools/mcp-syslog does not exist yet and the
+    # push 401s. Both registries are built by the same CI job from the same
+    # Containerfile, so this is the CI-built artifact either way -- switch to
+    # Quay once the repo is created there.
+    ghcr.io/crunchtools/mcp-syslog:latest \
     --transport streamable-http --host 0.0.0.0 --port 8027
 ExecStop=/usr/bin/podman stop -t 10 mcp-syslog
 ExecStopPost=/usr/bin/podman rm -f mcp-syslog
