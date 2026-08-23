@@ -55,8 +55,13 @@ jobs:
 
   build-and-push-ghcr:
     runs-on: ubuntu-latest
+    # needs: keeps Quay first, but always() decouples the two failure paths.
+    # The dual-push design exists so Quay succeeds independently of GHCR
+    # problems; a plain needs: makes the reverse true as well, and that is how
+    # a missing Quay repo (401 on first push) silently blocked GHCR from ever
+    # publishing anything at all.
     needs: build-and-push-quay
-    if: github.event_name != 'pull_request'
+    if: always() && github.event_name != 'pull_request'
     permissions:
       contents: read
       packages: write
