@@ -28,7 +28,7 @@ def context(
     start = center - timedelta(seconds=max(0, before_seconds))
     end = center + timedelta(seconds=max(0, after_seconds))
 
-    result = run_query(
+    matches = run_query(
         sources=[source] if source else None,
         start=start,
         end=end,
@@ -37,10 +37,10 @@ def context(
         newest_first=False,
     )
 
-    scope = source or f"{len(result.sources_searched)} sources"
+    scope = source or f"{len(matches.sources_searched)} sources"
     header = (
-        f"{len(result.lines)} entries from {scope} between "
+        f"{len(matches.lines)} entries from {scope} between "
         f"{start:%Y-%m-%d %H:%M:%S} and {end:%Y-%m-%d %H:%M:%S} "
         f"(±{before_seconds}s/{after_seconds}s around {center:%Y-%m-%d %H:%M:%S})"
     )
-    return render(result, show_source=source is None, header=header)
+    return render(matches, show_source=source is None, header=header)

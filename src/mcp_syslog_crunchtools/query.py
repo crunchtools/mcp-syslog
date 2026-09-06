@@ -72,7 +72,7 @@ def run_query(
     max_results = min(limit or config.max_results, config.max_results)
 
     targets = sources if sources else list_sources()
-    result = QueryResult(sources_searched=list(targets))
+    query_result = QueryResult(sources_searched=list(targets))
 
     for source in targets:
         try:
@@ -83,14 +83,14 @@ def run_query(
             continue
 
         for raw in iter_lines(files_for_range(source_dir, start, end)):
-            if result.scanned >= config.scan_limit:
-                result.scan_limit_hit = True
+            if query_result.scanned >= config.scan_limit:
+                query_result.scan_limit_hit = True
                 break
-            result.scanned += 1
+            query_result.scanned += 1
 
             line = parse_line(raw)
             if line is None:
-                result.unparsed += 1
+                query_result.unparsed += 1
                 continue
             if _passes_filters(
                 line,
@@ -100,50 +100,54 @@ def run_query(
                 pattern=pattern,
                 program=program,
             ):
-                result.lines.append(line)
+                query_result.lines.append(line)
 
-        if result.scan_limit_hit:
+        if query_result.scan_limit_hit:
             break
 
-    result.lines.sort(key=lambda item: item.timestamp)
+    query_result.lines.sort(key=lambda item: item.timestamp)
 
-    if len(result.lines) > max_results:
-        result.truncated = True
+    if len(query_result.lines) > max_results:
+        query_result.truncated = True
         # Keep the newest when truncating: a caller looking at a live failure
         # wants what just happened, not the oldest matches in the window.
-        result.lines = result.lines[-max_results:] if newest_first else result.lines[:max_results]
+        query_result.lines = (
+            query_result.lines[-max_results:]
+            if newest_first
+            else query_result.lines[:max_results]
+        )
 
-    return result
+    return query_result
 
 
-def render(result: QueryResult, *, show_source: bool = True, header: str = "") -> str:
-    """Render a result for the model, including why it might be incomplete."""
+def render(query_result: QueryResult, *, show_source: bool = True, header: str = "") -> str:
+    """Render a query_result for the model, including why it might be incomplete."""
     parts: list[str] = []
     if header:
         parts.append(header)
 
-    if not result.lines:
+    if not query_result.lines:
         parts.append(
-            f"No matching log entries. Scanned {result.scanned:,} lines across "
-            f"{len(result.sources_searched)} source(s)."
+            f"No matching log entries. Scanned {query_result.scanned:,} lines across "
+            f"{len(query_result.sources_searched)} source(s)."
         )
     else:
-        parts.append("\n".join(line.format(show_source=show_source) for line in result.lines))
+        parts.append("\n".join(line.format(show_source=show_source) for line in query_result.lines))
 
     notes: list[str] = []
-    if result.truncated:
+    if query_result.truncated:
         notes.append(
-            f"Showing the {len(result.lines)} most recent matches only — there were more. "
+            f"Showing the {len(query_result.lines)} most recent matches only — there were more. "
             "Narrow the time range or add a pattern."
         )
-    if result.scan_limit_hit:
+    if query_result.scan_limit_hit:
         notes.append(
-            f"Stopped after the {result.scanned:,}-line scan limit, so this result is "
-            "INCOMPLETE and an empty or short result does not mean nothing happened. "
+            f"Stopped after the {query_result.scanned:,}-line scan limit, so this query_result is "
+            "INCOMPLETE and an empty or short query_result does not mean nothing happened. "
             "Narrow the time range or name specific sources."
         )
-    if result.unparsed:
-        notes.append(f"{result.unparsed:,} line(s) did not match the expected log format.")
+    if query_result.unparsed:
+        notes.append(f"{query_result.unparsed:,} line(s) did not match the expected log format.")
 
     if notes:
         parts.append("\n".join(f"[!] {note}" for note in notes))

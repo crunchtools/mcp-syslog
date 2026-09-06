@@ -1,4 +1,4 @@
-"""Search and grep tools."""
+"""Search tool — regex and filter queries across sources."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def search(
     compiled = compile_pattern(pattern) if pattern else None
     sources = [source] if source else None
 
-    result = run_query(
+    matches = run_query(
         sources=sources,
         start=start,
         end=end,
@@ -34,7 +34,7 @@ def search(
     )
 
     window = f"since {since}" + (f" until {until}" if until else "")
-    scope = source or f"{len(result.sources_searched)} sources"
+    scope = source or f"{len(matches.sources_searched)} sources"
     filters = []
     if severity:
         filters.append(f"severity>={severity.upper()}")
@@ -44,23 +44,5 @@ def search(
         filters.append(f"program={program}")
     suffix = f" [{', '.join(filters)}]" if filters else ""
 
-    header = f"{len(result.lines)} entries from {scope}, {window}{suffix}"
-    return render(result, show_source=source is None, header=header)
-
-
-def grep(
-    pattern: str,
-    *,
-    source: str | None = None,
-    since: str = "24h",
-    severity: str | None = None,
-    limit: int | None = None,
-) -> str:
-    """Regex search across all sources, or one named source."""
-    return search(
-        source=source,
-        since=since,
-        severity=severity,
-        pattern=pattern,
-        limit=limit,
-    )
+    header = f"{len(matches.lines)} entries from {scope}, {window}{suffix}"
+    return render(matches, show_source=source is None, header=header)

@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 
 from fastmcp import FastMCP
 
-from .tools import context, grep, search, sources, stats, tail
+from .tools import context, search, sources, stats, tail
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +117,7 @@ async def syslog_grep_tool(
     Returns:
         Matching entries with their source, plus a note if the result is incomplete.
     """
-    return grep(pattern=pattern, source=source, since=since, severity=severity, limit=limit)
+    return search(pattern=pattern, source=source, since=since, severity=severity, limit=limit)
 
 
 @mcp.tool()

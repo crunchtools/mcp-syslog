@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 from mcp_syslog_crunchtools import config as config_mod
-from mcp_syslog_crunchtools.tools import context, grep, search, sources, stats, tail
+from mcp_syslog_crunchtools.tools import context, search, sources, stats, tail
 
 from .conftest import line, write_log
 
@@ -80,7 +80,7 @@ def test_search_empty_result_is_explicit(log_root: Path) -> None:
 
 
 def test_grep_searches_whole_fleet(log_root: Path) -> None:
-    out = grep(pattern="pool exhausted", since=SINCE)
+    out = search(pattern="pool exhausted", since=SINCE)
     assert "pool exhausted" in out
     assert "crunchtools.com" in out
 

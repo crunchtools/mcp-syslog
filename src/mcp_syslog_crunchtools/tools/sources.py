@@ -9,6 +9,11 @@ from ..reader import DATE_FILE_RE, list_sources, resolve_source_dir
 
 logger = logging.getLogger(__name__)
 
+MINUTES_PER_HOUR = 60
+MINUTES_PER_DAY = 1440
+# Past two days an hour count stops being useful; switch to whole days.
+HOURS_BEFORE_DAYS = 48
+
 
 def sources(*, pattern: str | None = None, include_internal: bool = False) -> str:
     """List every source the collector has logs for.
@@ -50,12 +55,12 @@ def sources(*, pattern: str | None = None, include_internal: bool = False) -> st
         f"{'SOURCE':<38} {'DAYS':>5} {'SIZE':>9} {'LAST WRITE':>12}",
     ]
     for name, days, size_mb, age_min in rows:
-        if age_min < 60:
+        if age_min < MINUTES_PER_HOUR:
             age = f"{age_min}m ago"
-        elif age_min < 60 * 48:
-            age = f"{age_min // 60}h ago"
+        elif age_min < MINUTES_PER_HOUR * HOURS_BEFORE_DAYS:
+            age = f"{age_min // MINUTES_PER_HOUR}h ago"
         else:
-            age = f"{age_min // 1440}d ago"
+            age = f"{age_min // MINUTES_PER_DAY}d ago"
         lines.append(f"{name[:38]:<38} {days:>5} {size_mb:>8.1f}M {age:>12}")
 
     return "\n".join(lines)

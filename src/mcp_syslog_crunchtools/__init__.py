@@ -4,6 +4,8 @@ import argparse
 
 __version__ = "0.1.0"
 
+DEFAULT_PORT = 8027
+
 
 def main() -> None:
     from .server import mcp
@@ -15,7 +17,7 @@ def main() -> None:
         default="stdio",
     )
     parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8027)
+    parser.add_argument("--port", type=int, default=DEFAULT_PORT)
     args = parser.parse_args()
 
     if args.transport == "stdio":
