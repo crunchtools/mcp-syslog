@@ -6,6 +6,11 @@ from ..config import get_config
 from ..parser import parse_line
 from ..reader import files_for_range, resolve_source_dir, tail_lines
 
+# Severity is applied after reading and most lines in a healthy service are
+# INFO, so a filtered tail reads well past the requested count.
+SEVERITY_OVERREAD_FACTOR = 20
+MAX_RAW_LINES = 100_000
+
 
 def tail(source: str, *, limit: int = 50, severity: str | None = None) -> str:
     """Return the most recent entries for a source.
@@ -22,10 +27,8 @@ def tail(source: str, *, limit: int = 50, severity: str | None = None) -> str:
     if not paths:
         return f"No log files for source {source!r}."
 
-    # Over-read when filtering, since severity is applied after the fact and most
-    # lines in a healthy service are INFO.
-    raw_limit = count * 20 if severity else count
-    raw_limit = min(raw_limit, 100_000)
+    raw_limit = count * SEVERITY_OVERREAD_FACTOR if severity else count
+    raw_limit = min(raw_limit, MAX_RAW_LINES)
 
     lines = []
     for raw in tail_lines(paths, raw_limit):
