@@ -79,7 +79,6 @@ dmypy.json
 
 # uv
 .uv/
-uv.lock
 
 # Local development
 .envrc
@@ -95,4 +94,3 @@ Thumbs.db
 # MCP Registry auth tokens
 .mcpregistry_*
 .venv/
-uv.lock
