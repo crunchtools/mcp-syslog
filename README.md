@@ -62,8 +62,9 @@ that hiding a line you do not understand is worse than showing it — but it is
 report a 57% error rate.
 
 **Severity is not badness.** Podman records anything a container writes to stderr
-at priority `err`, and plenty of services log routine INFO there. On lotor,
-`mcp-trentina` sits around 65% "ERR" while being entirely healthy:
+at priority `err`, and plenty of services log routine INFO there. One chatty
+`httpx`-based service in this fleet sits around 65% "ERR" while being entirely
+healthy:
 
 ```
 PRIORITY=3 | 2026-08-23 15:55:24 INFO  httpx: HTTP Request: GET https://... "200 OK"
@@ -108,7 +109,7 @@ No credentials — the server reads files off a read-only bind mount.
 podman run -d --name mcp-syslog \
   --network crunchtools \
   -p 127.0.0.1:8027:8027 \
-  -v /srv/syslog.crunchtools.com/data/logs:/logs:ro \
+  -v /path/to/syslog/data/logs:/logs:ro \
   quay.io/crunchtools/mcp-syslog:latest \
   --transport streamable-http --host 0.0.0.0 --port 8027
 ```
