@@ -7,9 +7,9 @@ from .stats import stats
 from .tail import tail
 
 __all__ = [
-    "search",
-    "tail",
-    "stats",
     "context",
+    "search",
     "sources",
+    "stats",
+    "tail",
 ]

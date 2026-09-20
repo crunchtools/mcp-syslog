@@ -112,9 +112,7 @@ def run_query(
         # Keep the newest when truncating: a caller looking at a live failure
         # wants what just happened, not the oldest matches in the window.
         query_result.lines = (
-            query_result.lines[-max_results:]
-            if newest_first
-            else query_result.lines[:max_results]
+            query_result.lines[-max_results:] if newest_first else query_result.lines[:max_results]
         )
 
     return query_result

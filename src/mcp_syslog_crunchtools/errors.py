@@ -33,5 +33,5 @@ class InvalidTimeRangeError(ToolError):
     def __init__(self, value: str) -> None:
         super().__init__(
             f"Could not parse time {value!r}. Use an ISO-8601 timestamp "
-            "(2026-08-23T15:00:00+00:00) or a relative offset like '15m', '2h', '3d'."
+            "(YYYY-MM-DDThh:mm:ss+00:00) or a relative offset like '15m', '2h', '3d'."
         )

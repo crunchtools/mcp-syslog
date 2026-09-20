@@ -1,20 +1,29 @@
-# Gourmand exceptions.
-#
-# This file was previously a verbatim copy of mcp-nagios's, so every path in it
-# pointed at src/mcp_nagios_crunchtools/ and matched nothing here. Rewritten
-# against this repo.
+[[exceptions]]
+check = "manifest_lint_suppression"
+path = "pyproject.toml"
+justification = "Reviewed each global ignore by removing it and running ruff. PIE790 and S105 had zero remaining hits and were deleted outright (S105 was already redundantly listed in tests/* too). PLC0415 fired on two real production sites (a function-local import in __init__.py and one in tools/tail.py) — both were checked for the circular-import justifications their absence implied and neither needed one, so both were hoisted to top-level imports instead of being ignored. S101 and PLR2004 fire only in tests/* and are now scoped there via per-file-ignores instead of global. TRY003 and PLW0603 fire only in config.py (ConfigurationError has no message template to hoist into; get_config is a lazy singleton needing `global`) and are scoped there. PLR0913 fires on server.py/tools/context.py/tools/search.py/query.py, all keyword-only query-filter functions mirroring the shared query engine and MCP tool schema, and on tests/conftest.py's `line` fixture — scoped per-file. RUF022 was fixed outright via `ruff --fix`. The only ignore verified as genuinely project-wide is TID252 (every internal relative import across every module)."
+classification = "by_design"
 
 [[exceptions]]
-check = "summary_litter"
-path = "CLAUDE.md"
-justification = "Required by the CrunchTools constitution as the project's agent instructions; it is not a status report."
+check = "absolute_paths"
+path = "deploy/nagios/nrpe-commands.cfg"
+justification = "The paths in this file are the standard, well-known NRPE plugin locations on the Nagios agent host it is deployed to (per the file's own header comment, naming the destination config on that fixed host) — real deployment configuration for a specific target host, not portability-breaking application code."
+classification = "by_design"
 
 [[exceptions]]
-check = "single_use_helpers"
-path = "src/mcp_syslog_crunchtools/query.py"
-justification = "_passes_filters is a six-condition predicate evaluated per log line inside a nested loop over sources and files. Inlining it puts six conditions in the middle of that loop; keeping it named also makes the filter semantics testable on their own."
+check = "hidden_env_config"
+path = "src/mcp_syslog_crunchtools/config.py"
+justification = "SYSLOG_LOG_ROOT is documented in README.md's Environment Variables table with its actual default (/logs) verified against this file's os.environ.get(\"SYSLOG_LOG_ROOT\", \"/logs\") call."
+classification = "by_design"
 
 [[exceptions]]
-check = "single_use_helpers"
+check = "hardcoded_years"
+path = "src/mcp_syslog_crunchtools/parser.py"
+justification = "2026-08-23 is a real historical fact — the actual date the collector's on-disk log format changed from five fields to six — not a decorative or AI-hallucinated timestamp. The comment needs this specific date to explain why five-field lines from before it still appear during the 90-day retention window and must be handled differently."
+classification = "by_design"
+
+[[exceptions]]
+check = "copy_paste_detection"
 path = "src/mcp_syslog_crunchtools/tools/stats.py"
-justification = "_collect is the scan-and-tally pass; its caller is the formatting pass. Merging them would mix I/O and rendering in one function, and _collect's scan-limit behaviour would stop being testable in isolation."
+justification = "stats() and tail() are semantically unrelated (aggregate volume/error-rate summary across many sources vs. the most recent N lines for one source); the 100%-similar 9-statement match is a coincidental structural collision — both happen to open with a config/time-setup step, an early-return guard, and a loop — not real copy-paste. The check's structural-similarity heuristic can't distinguish this from real duplication."
+classification = "gourmand_bug"
