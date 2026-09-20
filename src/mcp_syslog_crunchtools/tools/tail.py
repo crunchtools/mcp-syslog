@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from ..config import get_config
-from ..parser import parse_line
+from ..parser import parse_line, severity_at_least
 from ..reader import files_for_range, resolve_source_dir, tail_lines
 
 # Severity is applied after reading and most lines in a healthy service are
@@ -35,11 +35,8 @@ def tail(source: str, *, limit: int = 50, severity: str | None = None) -> str:
         parsed = parse_line(raw)
         if parsed is None:
             continue
-        if severity is not None:
-            from ..parser import severity_at_least
-
-            if not severity_at_least(parsed.severity, severity):
-                continue
+        if severity is not None and not severity_at_least(parsed.severity, severity):
+            continue
         lines.append(parsed)
 
     shown = lines[-count:]

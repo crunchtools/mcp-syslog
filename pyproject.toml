@@ -48,25 +48,38 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP", "S", "B", "C4", "C901", "DTZ", "T10", "ISC", "PIE", "PT", "RET", "SIM", "TID", "TCH", "ARG", "PLC", "PLE", "PLR", "PLW", "TRY", "RUF"]
 ignore = [
-    "S101",
-    "TRY003",
-    "PLR0913",
-    "PLR2004",
-    "PLW0603",
-    "PIE790",
-    "PLC0415",
-    "S105",
+    # Verified project-wide by removing each ignore and running ruff: every
+    # remaining hit is an internal relative import, which is this package's
+    # actual, consistent import style across every tools/ module.
     "TID252",
-    "RUF022",
 ]
 
 [tool.ruff.lint.pylint]
 max-branches = 10
 max-statements = 50
 
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
 [tool.ruff.lint.per-file-ignores]
 # ARG001: fixtures like log_root are requested for their side effects, not their value.
-"tests/*" = ["S105", "PLC0415", "PLR2004", "ARG001", "PLR0917"]
+# S101 (assert) and S105 (hardcoded-password-like literals) are genuinely
+# test-only; PLC0415 and PLR2004 were checked here too but no longer fire —
+# kept for visibility if test code grows to need them again.
+"tests/*" = ["S101", "S105", "PLC0415", "PLR2004", "ARG001", "PLR0917", "PLR0913"]
+# TRY003 (long exception messages) and PLW0603 (global statement) fire only
+# here: ConfigurationError takes a full formatted message per call (no
+# shared template to hoist), and get_config is a lazy singleton accessor
+# that needs `global` to set the module-level cache.
+"src/mcp_syslog_crunchtools/config.py" = ["TRY003", "PLW0603"]
+# PLR0913 (too many arguments) fires on these query/tool functions, whose
+# keyword-only filter params (source/since/until/severity/pattern/...) mirror
+# each other, the shared query engine, and the MCP tool schema — bundling
+# them into an object would only duplicate that schema.
+"src/mcp_syslog_crunchtools/server.py" = ["PLR0913"]
+"src/mcp_syslog_crunchtools/tools/context.py" = ["PLR0913"]
+"src/mcp_syslog_crunchtools/tools/search.py" = ["PLR0913"]
+"src/mcp_syslog_crunchtools/query.py" = ["PLR0913"]
 
 [tool.mypy]
 python_version = "3.10"

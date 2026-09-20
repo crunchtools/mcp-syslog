@@ -2,14 +2,14 @@
 
 import argparse
 
+from .server import mcp
+
 __version__ = "0.1.0"
 
 DEFAULT_PORT = 8027
 
 
 def main() -> None:
-    from .server import mcp
-
     parser = argparse.ArgumentParser(description="Syslog MCP server")
     parser.add_argument(
         "--transport",
