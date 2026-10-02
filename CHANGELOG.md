@@ -6,6 +6,13 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-02
+
+### Fixed
+
+- The package, `__version__` and the MCP server reported 0.1.0 while the
+  v1.0.0 release and image said 1.0.0; all three now carry the release version.
+
 ### Changed
 - Constitution is now a v1.18.0 manifest: only repo-specific facts remain;
   fleet and profile rules apply by reference.
