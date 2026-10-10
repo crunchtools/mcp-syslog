@@ -41,7 +41,8 @@ async def test_every_tool_is_classified() -> None:
     annotated = {
         tool.name
         for tool in tools
-        if tool.annotations is not None and tool.annotations.readOnlyHint is True
+        if tool.annotations is not None
+        and tool.annotations.model_dump(by_alias=True).get("readOnlyHint") is True
     }
     assert annotated == READ_ONLY
 
