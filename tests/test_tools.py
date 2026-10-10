@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 from mcp_syslog_crunchtools import config as config_mod
+from mcp_syslog_crunchtools.server import mcp
 from mcp_syslog_crunchtools.tools import context, search, sources, stats, tail
 
 from .conftest import line, write_log
@@ -17,6 +18,33 @@ from .conftest import line, write_log
 # Every fixture entry sits on 2026-08-23, so queries use an absolute start rather
 # than a relative one that would drift past the data as the suite ages.
 SINCE = "2026-08-23T00:00:00+00:00"
+
+# Every registered tool is in exactly one set (constitution MCP Server 1.7.0).
+# A tool belongs in READ_ONLY only if it changes nothing; when unsure, WRITES.
+READ_ONLY = frozenset(
+    {
+        "syslog_sources_tool",
+        "syslog_search_tool",
+        "syslog_grep_tool",
+        "syslog_tail_tool",
+        "syslog_context_tool",
+        "syslog_stats_tool",
+    }
+)
+WRITES: frozenset[str] = frozenset()
+
+
+async def test_every_tool_is_classified() -> None:
+    tools = await mcp.list_tools()
+    assert READ_ONLY.isdisjoint(WRITES)
+    assert {tool.name for tool in tools} == READ_ONLY | WRITES
+    annotated = {
+        tool.name
+        for tool in tools
+        if tool.annotations is not None
+        and tool.annotations.model_dump(by_alias=True).get("readOnlyHint") is True
+    }
+    assert annotated == READ_ONLY
 
 
 def test_sources_lists_services_and_hides_collector(log_root: Path) -> None:

@@ -20,7 +20,7 @@ async def lifespan(_mcp: FastMCP) -> AsyncIterator[None]:
 
 mcp = FastMCP(
     name="mcp-syslog-crunchtools",
-    version="1.0.1",
+    version="1.1.0",
     lifespan=lifespan,
     instructions=(
         "MCP server for logs collected centrally from crunchtools infrastructure. "
@@ -43,7 +43,13 @@ mcp = FastMCP(
 )
 
 
-@mcp.tool()
+# Every tool here reads log files and changes nothing, so each publishes
+# readOnlyHint. A gateway uses it to decide whether an invalid optional argument
+# may be dropped or must refuse the call (crunchtools/mcp-trentina#335).
+READ_ONLY = {"readOnlyHint": True}
+
+
+@mcp.tool(annotations=READ_ONLY)
 async def syslog_sources_tool(
     pattern: str | None = None,
     include_internal: bool = False,
@@ -60,7 +66,7 @@ async def syslog_sources_tool(
     return sources(pattern=pattern, include_internal=include_internal)
 
 
-@mcp.tool()
+@mcp.tool(annotations=READ_ONLY)
 async def syslog_search_tool(
     *,
     source: str | None = None,
@@ -97,7 +103,7 @@ async def syslog_search_tool(
     )
 
 
-@mcp.tool()
+@mcp.tool(annotations=READ_ONLY)
 async def syslog_grep_tool(
     pattern: str,
     source: str | None = None,
@@ -120,7 +126,7 @@ async def syslog_grep_tool(
     return search(pattern=pattern, source=source, since=since, severity=severity, limit=limit)
 
 
-@mcp.tool()
+@mcp.tool(annotations=READ_ONLY)
 async def syslog_tail_tool(
     source: str,
     limit: int = 50,
@@ -139,7 +145,7 @@ async def syslog_tail_tool(
     return tail(source=source, limit=limit, severity=severity)
 
 
-@mcp.tool()
+@mcp.tool(annotations=READ_ONLY)
 async def syslog_context_tool(
     timestamp: str,
     *,
@@ -175,7 +181,7 @@ async def syslog_context_tool(
     )
 
 
-@mcp.tool()
+@mcp.tool(annotations=READ_ONLY)
 async def syslog_stats_tool(
     since: str = "1h",
     source: str | None = None,

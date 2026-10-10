@@ -4,7 +4,7 @@ import argparse
 
 from .server import mcp
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 DEFAULT_PORT = 8027
 

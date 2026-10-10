@@ -6,6 +6,21 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-10
+
+### Added
+- All six tools publish `readOnlyHint: true`; each only reads log files. A
+  gateway uses the annotation to decide whether an invalid optional argument
+  may be dropped or must refuse the call (crunchtools/mcp-trentina#335).
+- A test pins every registered tool into a `READ_ONLY` or a `WRITES` set, so a
+  new tool fails the suite until it is classified (constitution v1.22.0).
+
+### Fixed
+- `server.json` and the container label still said 0.1.0.
+
+### Changed
+- Inherits constitution v1.22.0.
+
 ## [1.0.1] - 2026-10-02
 
 ### Fixed
