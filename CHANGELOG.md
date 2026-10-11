@@ -6,6 +6,9 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+- Container image now installs dependencies from `uv.lock` instead of resolving them at build time
+
 ## [1.1.0] - 2026-10-10
 
 ### Added
