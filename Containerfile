@@ -9,13 +9,19 @@ FROM quay.io/hummingbird/python:latest-builder AS pip-builder
 USER 0
 
 WORKDIR /app
-COPY pyproject.toml README.md ./
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY pyproject.toml uv.lock README.md ./
 COPY src/ ./src/
 
 # --target rather than a plain install: the builder runs as a non-root user with
 # HOME=/tmp, so pip would otherwise scatter a *user* install into /tmp/.local.
 # It also avoids hardcoding a python3.NN path that changes under us on rebuild.
-RUN pip install --no-cache-dir --target=/site .
+#
+# Dependencies come from uv.lock (hash-pinned), not a fresh resolve, so the image
+# runs the same versions the tests ran against. --frozen fails if the lock is stale.
+RUN uv export --frozen --no-dev --no-emit-project -o /tmp/requirements.txt \
+    && pip install --no-cache-dir --target=/site -r /tmp/requirements.txt \
+    && pip install --no-cache-dir --no-deps --target=/site .
 
 # Verified here rather than in the final stage, which cannot execute anything.
 RUN PYTHONPATH=/site python -c "from mcp_syslog_crunchtools import main; print('Installation verified')"
