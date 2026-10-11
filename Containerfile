@@ -29,7 +29,7 @@ RUN PYTHONPATH=/site python -c "from mcp_syslog_crunchtools import main; print('
 FROM quay.io/hummingbird/python:latest
 
 LABEL name="mcp-syslog-crunchtools" \
-      version="1.1.0" \
+      version="1.1.1" \
       summary="Secure MCP server for centrally collected infrastructure logs" \
       description="Search, tail, grep and correlate logs collected by crunchtools/syslog" \
       maintainer="crunchtools.com" \
