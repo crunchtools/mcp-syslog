@@ -1,11 +1,11 @@
 # Two stages, because the runtime base has no shell.
 #
-# quay.io/hummingbird/python:latest was rebuilt distroless on 2026-08-19 and now
+# quay.io/hummingbird/python:3.14 was rebuilt distroless on 2026-08-19 and now
 # contains 33 binaries and no /bin/sh, so a `RUN` in the final stage fails with
 # "executable file `/bin/sh` not found". Anything that needs to execute has to
 # happen in the builder; the final stage may only COPY.
 
-FROM quay.io/hummingbird/python:latest-builder AS pip-builder
+FROM quay.io/hummingbird/python:3.14-builder AS pip-builder
 USER 0
 
 WORKDIR /app
@@ -26,7 +26,7 @@ RUN uv export --frozen --no-dev --no-emit-project -o /tmp/requirements.txt \
 # Verified here rather than in the final stage, which cannot execute anything.
 RUN PYTHONPATH=/site python -c "from mcp_syslog_crunchtools import main; print('Installation verified')"
 
-FROM quay.io/hummingbird/python:latest
+FROM quay.io/hummingbird/python:3.14
 
 LABEL name="mcp-syslog-crunchtools" \
       version="1.1.1" \
