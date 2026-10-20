@@ -20,7 +20,7 @@ async def lifespan(_mcp: FastMCP) -> AsyncIterator[None]:
 
 mcp = FastMCP(
     name="mcp-syslog-crunchtools",
-    version="1.1.1",
+    version="1.2.0",
     lifespan=lifespan,
     instructions=(
         "MCP server for logs collected centrally from crunchtools infrastructure. "
