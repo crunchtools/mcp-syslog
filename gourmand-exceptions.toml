@@ -27,3 +27,14 @@ check = "copy_paste_detection"
 path = "src/mcp_syslog_crunchtools/tools/stats.py"
 justification = "stats() and tail() are semantically unrelated (aggregate volume/error-rate summary across many sources vs. the most recent N lines for one source); the 100%-similar 9-statement match is a coincidental structural collision — both happen to open with a config/time-setup step, an early-return guard, and a loop — not real copy-paste. The check's structural-similarity heuristic can't distinguish this from real duplication."
 classification = "gourmand_bug"
+
+# Ruff is not missing; it moved. Gourmand's IF001 looks for a literal
+# `ruff-check` hook id, and under python-sdlc (constitution XII, v1.30.0) ruff
+# runs inside the `sdlc-commit` hook, configured by [tool.ruff] in
+# pyproject.toml. Same precedent as trentina.
+[[exceptions]]
+check = "linter_configuration"
+path = ".pre-commit-config.yaml"
+pattern = "ruff-check"
+justification = "ruff runs inside the sdlc-commit hook from python-sdlc (constitution XII v1.30.0), configured by [tool.ruff] in pyproject.toml; Gourmand looks for a literal ruff hook id"
+classification = "by_design"
