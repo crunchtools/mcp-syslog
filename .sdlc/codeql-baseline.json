@@ -1,0 +1,17 @@
+[
+  {
+    "rule": "py/incomplete-url-substring-sanitization",
+    "path": "tests/test_tools.py",
+    "fingerprint": "a3f3f88a7c4b728b:1"
+  },
+  {
+    "rule": "py/incomplete-url-substring-sanitization",
+    "path": "tests/test_tools.py",
+    "fingerprint": "d650102ba87553c2:1"
+  },
+  {
+    "rule": "py/incomplete-url-substring-sanitization",
+    "path": "tests/test_tools.py",
+    "fingerprint": "f33d310659f0c54:1"
+  }
+]
