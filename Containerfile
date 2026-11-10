@@ -20,7 +20,7 @@ COPY src/ ./src/
 # Dependencies come from uv.lock (hash-pinned), not a fresh resolve, so the image
 # runs the same versions the tests ran against. --frozen fails if the lock is stale.
 RUN uv export --frozen --no-dev --no-emit-project -o /tmp/requirements.txt \
-    && pip install --no-cache-dir --target=/site -r /tmp/requirements.txt \
+    && pip install --no-cache-dir --no-deps --target=/site -r /tmp/requirements.txt \
     && pip install --no-cache-dir --no-deps --target=/site .
 
 # Verified here rather than in the final stage, which cannot execute anything.
@@ -29,7 +29,7 @@ RUN PYTHONPATH=/site python -c "from mcp_syslog_crunchtools import main; print('
 FROM quay.io/hummingbird/python:3.14
 
 LABEL name="mcp-syslog-crunchtools" \
-      version="1.2.1" \
+      version="1.2.2" \
       summary="Secure MCP server for centrally collected infrastructure logs" \
       description="Search, tail, grep and correlate logs collected by crunchtools/syslog" \
       maintainer="crunchtools.com" \

@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-11-10
+
+### Fixed
+
+- Dependency install from `uv.lock` was missing `--no-deps` on the `-r requirements.txt` step, letting pip re-resolve past the locked set. Added `--no-deps` so the image installs exactly what CI tested.
+
 ## [1.2.1] - 2026-10-31
 
 ### Security
