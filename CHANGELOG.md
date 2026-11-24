@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-24
+
 ### Changed
 - Gatehouse triage receives the review job's result (`review_result`), so a PR whose review died before posting anything is held instead of passing.
 - Promote signs the image with the fleet cosign key (`sign: true`), because
