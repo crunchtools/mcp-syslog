@@ -7,8 +7,8 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Fixed
-- The image takes uv from PyPI at a pinned version (`uv==0.13.7`, as mcp-nagios and
-  trentina do) instead of `COPY --from=ghcr.io/astral-sh/uv:latest`, an untrusted
+- The image takes uv from PyPI, hash-locked in `container/build-requirements.txt` and installed
+  with `--require-hashes`, instead of `COPY --from=ghcr.io/astral-sh/uv:latest`, an untrusted
   registry's floating tag that sdlc's image job refuses once it verifies `--from`
   images like FROMs (#96).
 
