@@ -8,8 +8,11 @@
 FROM quay.io/hummingbird/python:3.14-builder AS pip-builder
 USER 0
 
+# uv from PyPI at a pinned version, as the other crunchtools MCP servers take it:
+# a COPY --from=ghcr.io/astral-sh/uv:latest pulled an untrusted registry's floating
+# tag, which sdlc's image job refuses once it verifies --from images like FROMs (#96).
+RUN pip install --no-cache-dir uv==0.13.7
 WORKDIR /app
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 COPY pyproject.toml uv.lock README.md ./
 COPY src/ ./src/
 
