@@ -8,8 +8,12 @@
 FROM quay.io/hummingbird/python:3.14-builder AS pip-builder
 USER 0
 
+# uv from PyPI, hash-locked in container/build-requirements.txt. It was
+# COPY --from=ghcr.io/astral-sh/uv:latest: an untrusted registry's floating tag,
+# which sdlc's image job refuses once it verifies --from images like FROMs (#96).
 WORKDIR /app
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY container/build-requirements.txt ./
+RUN pip install --no-cache-dir --no-deps --require-hashes --only-binary=:all: -r build-requirements.txt
 COPY pyproject.toml uv.lock README.md ./
 COPY src/ ./src/
 

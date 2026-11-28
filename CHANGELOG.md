@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+- The image takes uv from PyPI, hash-locked in `container/build-requirements.txt` and installed
+  with `--require-hashes`, instead of `COPY --from=ghcr.io/astral-sh/uv:latest`, an untrusted
+  registry's floating tag that sdlc's image job refuses once it verifies `--from`
+  images like FROMs (#96).
+
 ## [1.3.0] - 2026-11-24
 
 ### Changed
